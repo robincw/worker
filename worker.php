@@ -13,12 +13,8 @@ $loader = new YamlFileLoader($container, new FileLocator($configDir));
 $loader->load('services.yml');
 $loader->load('parameters.yml');
 if (defined('ENV_TEST') && ENV_TEST) {
-    if(file_exists($configDir . 'services_test.yml')) {
-    	$loader->load('services_test.yml');
-    }
-    if(file_exists($configDir . 'parameters_test.yml')) {
-    	$loader->load('parameters_test.yml');
-    }
+    $loader->load('services_test.yml');
+    $loader->load('parameters_test.yml');
 }
 $application = new Application();
 $application->add($container->get('app.command.start_worker'));
