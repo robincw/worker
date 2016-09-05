@@ -23,10 +23,11 @@ services:
     depends_on:
       - zookeeper
   worker:
-    build: ./docker/Dockerfile
-    image: 
+    build: .
+    image: phpkafka-worker
     container_name: phpkafka-worker
     volumes:
-      - .:/opt/phpkafka-worker/
+      - ..:/opt/phpkafka-worker/
     depends_on:
       - kafka
+    command: php /opt/phpkafka-worker/worker.php start
