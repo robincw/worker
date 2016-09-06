@@ -14,9 +14,6 @@
             "Robincw\\Worker\\": "src/"
         }
     },
-    "config": {
-        "bin-dir": "bin"
-    },
     "minimum-stability": "stable",
     "require": {
         "symfony/dependency-injection": "^3.1",
