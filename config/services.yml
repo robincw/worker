@@ -1,5 +1,0 @@
-services:
-  app.command.start_worker:
-    class: Robincw\Worker\Application\StartWorkCommand
-    arguments:
-      - '%message%'

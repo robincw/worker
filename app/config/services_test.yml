@@ -1,0 +1,14 @@
+services:
+
+  inf.queue:
+    class: Robincw\Worker\Infrastructure\InMemoryQueue
+
+  inf.producer:
+    class: Robincw\Worker\Infrastructure\InMemoryQueueProducer
+    arguments:
+      - '@inf.queue'
+
+  inf.consumer:
+    class: Robincw\Worker\Infrastructure\InMemoryQueueConsumer
+    arguments:
+      - '@inf.queue'

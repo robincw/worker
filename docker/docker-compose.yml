@@ -8,10 +8,12 @@ services:
       - "3888:3888"
   kafka:
     image: appcelerator/kafka:latest
+    hostname: kafka
     ports:
       - "9092"
     environment:
       - ZOOKEEPER_CONNECT=zookeeper:2181
+      - TOPIC_LIST=test
     depends_on:
       - zookeeper
   kafka-manager:
@@ -23,11 +25,15 @@ services:
     depends_on:
       - zookeeper
   worker:
-    build: .
+    build: worker
     image: phpkafka-worker
     container_name: phpkafka-worker
     volumes:
       - ..:/opt/phpkafka-worker/
     depends_on:
       - kafka
-    command: php /opt/phpkafka-worker/worker.php start
+    links:
+      - kafka
+    #environment:
+    #  - ENV_TEST=${ENV_TEST}
+    command: "bash -c '(sleep 5) && (php /opt/phpkafka-worker/app/main.php test 10)'"

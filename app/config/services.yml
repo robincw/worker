@@ -1,0 +1,70 @@
+services:
+  app.command.start_worker:
+    class: Robincw\Worker\Application\StartWorkCommand
+    arguments:
+      - '@worker'
+
+  app.command.test_the_queue:
+    class: Robincw\Worker\Application\TestQueueCommand
+    arguments:
+      - '@message_generator'
+      - '@worker'
+
+  worker:
+    class: Robincw\Worker\Domain\MessageLoggingWorker
+    arguments:
+      - '@inf.consumer'
+      - '@inf.logger'
+
+  message_generator:
+    class: Robincw\Worker\Domain\MessageGenerator
+    arguments:
+      - '@inf.producer'
+      - '@inf.logger'
+
+  inf.logger:
+    class: Monolog\Logger
+    arguments:
+      - 'workerlog'
+
+  inf.producer:
+    class: Robincw\Worker\Infrastructure\KafkaProducerAdapter
+    arguments:
+      - '@inf.kafka.producer'
+      - '%kafka.topics%'
+      - '@inf.logger'
+
+  inf.consumer:
+    class: Robincw\Worker\Infrastructure\KafkaHighLevelConsumerAdapter
+    arguments:
+      - '@inf.kafka.high_level_consumer'
+      - '%kafka.topics%'
+      - '@inf.logger'
+      
+  inf.kafka.config:
+    class: RdKafka\Conf
+    calls:
+      - [set, ['group.id', '%kafka.group.id%']]
+      - [set, ['metadata.broker.list', '%kafka.metadata.broker.list%']]
+      - [setDefaultTopicConf, ['@inf.kafka.topic_config']]
+
+  inf.kafka.topic_config:
+    class: RdKafka\TopicConf
+    calls:
+      - [set, ['auto.offset.reset', '%kafka.auto.offset.reset%']]
+
+  inf.kafka.low_level_consumer:
+    class: RdKafka\Consumer
+    arguments:
+      - '@inf.kafka.config'
+
+  inf.kafka.high_level_consumer:
+    class: RdKafka\KafkaConsumer
+    arguments:
+      - '@inf.kafka.config'
+
+  inf.kafka.producer:
+    class: RdKafka\Producer
+    calls:
+      - [setLogLevel, [7]]
+      - [addBrokers, ['%kafka.metadata.broker.list%']]
