@@ -40,7 +40,14 @@ services:
       - '@inf.kafka.high_level_consumer'
       - '%kafka.topics%'
       - '@inf.logger'
-      
+
+  inf.consumer_low_level:
+    class: Robincw\Worker\Infrastructure\KafkaLowLevelConsumerAdapter
+    arguments:
+      - '@inf.kafka.low_level_consumer'
+      - '%kafka.topics%'
+      - '@inf.logger'
+
   inf.kafka.config:
     class: RdKafka\Conf
     calls:
